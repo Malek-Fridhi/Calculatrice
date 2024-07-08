@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sélectionne tous les boutons et l'affichage
     const buttons = document.querySelectorAll("button");
     const display = document.getElementById("affichage").querySelector("p");
-    const audio = document.getElementById("clic");
+    const audioClic = document.getElementById("clic");
+    const audioEqual = document.getElementById("audioEqual");
+    const audioDonkey = document.getElementById("donkey");
   
     // Variable pour stocker l'état actuel de l'affichage
     let currentDisplay = "0";
@@ -22,6 +24,15 @@ document.addEventListener("DOMContentLoaded", function() {
       try {
         // Utilise `eval` pour calculer le résultat (Attention: `eval` peut être dangereux avec des entrées non vérifiées)
         currentDisplay = eval(currentDisplay).toString();
+  
+        // Vérifie si le résultat est égal à 2
+        if (currentDisplay === "2") {
+          audioDonkey.currentTime = 0; // Réinitialise la lecture
+          audioDonkey.play(); // Joue le son donkey.mp3
+        } else {
+          audioEqual.currentTime = 0; // Réinitialise la lecture
+          audioEqual.play(); // Joue le son equal.mp3
+        }
       } catch (error) {
         currentDisplay = "Erreur";
       }
@@ -31,35 +42,34 @@ document.addEventListener("DOMContentLoaded", function() {
     // Ajoute des écouteurs d'événements pour tous les boutons
     buttons.forEach(button => {
       button.addEventListener("click", function() {
-        // Lecture du son
-        audio.currentTime = 0; // Remet le son au début
-        audio.play();
-        
         const value = button.value;
   
-        switch (value) {
-          case "AC":
-            currentDisplay = "0";
-            break;
-          case "DEL":
-            if (currentDisplay.length > 1) {
-              currentDisplay = currentDisplay.slice(0, -1);
-            } else {
+        // Lecture du son approprié
+        if (value === "=") {
+          calculate();
+        } else {
+          audioClic.currentTime = 0;
+          audioClic.play();
+          switch (value) {
+            case "AC":
               currentDisplay = "0";
-            }
-            break;
-          case "=":
-            calculate();
-            break;
-          default:
-            if (currentDisplay === "0") {
-              currentDisplay = value;
-            } else {
-              currentDisplay += value;
-            }
+              break;
+            case "DEL":
+              if (currentDisplay.length > 1) {
+                currentDisplay = currentDisplay.slice(0, -1);
+              } else {
+                currentDisplay = "0";
+              }
+              break;
+            default:
+              if (currentDisplay === "0") {
+                currentDisplay = value;
+              } else {
+                currentDisplay += value;
+              }
+          }
+          display.textContent = currentDisplay;
         }
-  
-        display.textContent = currentDisplay;
       });
     });
   });
